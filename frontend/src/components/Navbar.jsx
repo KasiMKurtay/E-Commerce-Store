@@ -33,7 +33,7 @@ const Navbar = () => {
 
             {isAdmin && (
               <Link
-                to="/admin"
+                to={"/dashboard"}
                 className="bg-gray-800 hover:bg-gray-700 text-purple-400 px-3 py-1.5 rounded-md text-sm font-medium flex items-center transition-colors duration-200"
               >
                 <Lock className="mr-1.5" size={14} />
