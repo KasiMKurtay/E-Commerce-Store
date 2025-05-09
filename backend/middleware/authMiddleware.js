@@ -4,7 +4,7 @@ import User from "../models/userModel.js";
 export const protectedRoute = async (req, res, next) => {
   try {
     const accessToken = req.cookies.accessToken;
-
+    console.log("accessToken:", accessToken);
     if (!accessToken) {
       return res
         .status(401)
@@ -13,7 +13,9 @@ export const protectedRoute = async (req, res, next) => {
 
     try {
       const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+      console.log("decoded JWT:", decoded);
       const user = await User.findById(decoded.userId).select("-password");
+      console.log("Kullanıcı bulundu mu?", user ? "EVET" : "HAYIR");
 
       if (!user) {
         return res
