@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
-import { Loader, PlusCircle, Upload, Image as ImageIcon } from "lucide-react";
+import { Loader, PlusCircle, Upload } from "lucide-react";
 import { useState, useRef } from "react";
+import { useProductStore } from "../stores/useProductStore";
+import toast from "react-hot-toast";
 
 const categories = [
   "jean",
@@ -20,16 +22,15 @@ const CreateProduct = () => {
     image: "",
     category: "",
   });
-  const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const fileInputRef = useRef(null);
 
+  const { createProduct, loading } = useProductStore();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Product created:", newProduct);
+      await createProduct(newProduct);
       setNewProduct({
         name: "",
         description: "",
@@ -38,8 +39,8 @@ const CreateProduct = () => {
         category: "",
       });
       setPreviewImage("");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "An error occurred");
     }
   };
 
@@ -49,15 +50,13 @@ const CreateProduct = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
-        setNewProduct({ ...newProduct, image: file.name });
+        setNewProduct({ ...newProduct, image: reader.result });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const triggerFileInput = () => {
-    fileInputRef.current.click();
-  };
+  const triggerFileInput = () => fileInputRef.current.click();
 
   return (
     <motion.div
@@ -221,7 +220,7 @@ const CreateProduct = () => {
                   className="h-32 w-32 object-cover rounded-md mb-2"
                 />
                 <span className="text-sm text-gray-400">
-                  {newProduct.image}
+                  {loading ? "Uploading...  " : "Change"}
                 </span>
               </div>
             ) : (

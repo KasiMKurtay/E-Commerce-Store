@@ -1,18 +1,25 @@
 import { BarChart, PlusCircle, ShoppingBasket } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Analytics from "../components/Analytics";
 import ListOfProducts from "../components/ListOfProducts";
 import CreateProduct from "../components/createProduct";
+import { useProductStore } from "../stores/useProductStore";
 
 const tabs = [
+  { id: "analytics", label: "Analytics", icon: BarChart },
   { id: "create", label: "Create Product", icon: PlusCircle },
   { id: "products", label: "Products", icon: ShoppingBasket },
-  { id: "analytics", label: "Analytics", icon: BarChart },
 ];
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("analytics");
+
+  const { fetchAllProducts } = useProductStore();
+
+  useEffect(() => {
+    fetchAllProducts();
+  }, [fetchAllProducts]);
 
   return (
     <div className="min-h-screen rounded-md bg-gradient-to-br from-gray-950 to-gray-900 text-white relative overflow-hidden">
@@ -49,9 +56,9 @@ const AdminPage = () => {
           transition={{ duration: 0.3 }}
           className="mt-6 p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 shadow-lg"
         >
+          {activeTab === "analytics" && <Analytics />}
           {activeTab === "create" && <CreateProduct />}
           {activeTab === "products" && <ListOfProducts />}
-          {activeTab === "analytics" && <Analytics />}
         </motion.div>
       </div>
     </div>

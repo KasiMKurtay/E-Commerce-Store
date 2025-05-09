@@ -51,17 +51,12 @@ export const createProduct = async (req, res) => {
       name,
       description,
       price,
-      image: cloudinaryRes?.secure_url || "",
+      image: cloudinaryRes?.secure_url,
       category,
     });
-
-    if (product.isFeatured) {
-      await updateFeaturedProductsCache();
-    }
-
     res.status(201).json(product);
   } catch (error) {
-    console.log("Error in createProduct controller", error.message);
+    console.log("Error in createProduct controller", error);
     res.status(500).json({ message: error.message });
   }
 };

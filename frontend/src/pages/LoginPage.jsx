@@ -67,6 +67,7 @@ const LoginPage = () => {
                   }
                   className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus:border-transparent sm:text-sm"
                   placeholder="you@example.com"
+                  autoComplete="email"
                 />
               </div>
             </div>
@@ -92,6 +93,7 @@ const LoginPage = () => {
                   }
                   className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus:border-transparent sm:text-sm"
                   placeholder="••••••••"
+                  autoComplete="current-password"
                 />
               </div>
             </div>
