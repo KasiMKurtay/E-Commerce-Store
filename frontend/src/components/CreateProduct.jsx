@@ -5,12 +5,12 @@ import { useProductStore } from "../stores/useProductStore";
 import toast from "react-hot-toast";
 
 const categories = [
-  "jean",
-  "t-shirt",
+  "jeans",
+  "tshirts",
   "jacket",
   "glasses",
   "shoes",
-  "suit",
+  "suits",
   "bag",
 ];
 

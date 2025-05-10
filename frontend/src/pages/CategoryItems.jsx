@@ -21,7 +21,7 @@ const CategoryItems = ({ category }) => {
               {category.name}
             </h3>
             <p className="text-gray-300 text-sm font-medium">
-              {category.itemCount || "Explore Collection"}{" "}
+              {category.itemCount || "Explore Collection"}
             </p>
             <button className="mt-2 px-4 py-1.5 text-xs font-semibold bg-white/90 text-gray-900 rounded-full hover:bg-white transition-colors duration-200">
               Shop Now
