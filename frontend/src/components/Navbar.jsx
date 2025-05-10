@@ -1,10 +1,12 @@
 import { Lock, LogIn, LogOut, ShoppingCart, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
+import { useCartStore } from "../stores/useCartStore";
 
 const Navbar = () => {
   const { user, logout } = useUserStore();
   const isAdmin = user?.role === "admin";
+  const { cart } = useCartStore();
 
   return (
     <header className="fixed top-0 left-0 w-full bg-gray-900/80 backdrop-blur-md border-b border-gray-800 z-50">
@@ -26,7 +28,7 @@ const Navbar = () => {
                 <ShoppingCart className="mr-1" size={20} />
                 <span className="hidden sm:inline">Cart</span>
                 <span className="absolute -top-2.5 -right-3 bg-purple-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                  0
+                  {cart.length}
                 </span>
               </Link>
             )}
