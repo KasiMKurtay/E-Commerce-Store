@@ -36,7 +36,7 @@ const OrderSummary = () => {
     try {
       const res = await axios.post("/payments/create-checkout-session", {
         products: cart,
-        coupon: coupon ? coupon.code : null,
+        couponCode: coupon ? coupon.code : null,
       });
       const session = res.data;
       const result = await stripe.redirectToCheckout({
@@ -55,7 +55,7 @@ const OrderSummary = () => {
     if (!couponCode) return;
 
     setIsApplying(true);
-    const normalizedCode = couponCode.trim().toLowerCase();
+    const normalizedCode = couponCode.trim().toUpperCase();
     const result = await applyCoupon(normalizedCode);
 
     if (!result) {
