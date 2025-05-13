@@ -47,7 +47,7 @@ const RecItems = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {recommendations.map((product) => (
           <motion.div
-            key={product.id}
+            key={product._id}
             className="group rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800/50 to-gray-900/50 overflow-hidden shadow-lg hover:shadow-purple-500/20 transition-all"
             whileHover={{ y: -5 }}
           >

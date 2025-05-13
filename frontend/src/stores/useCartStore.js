@@ -81,4 +81,7 @@ export const useCartStore = create((set, get) => ({
     }));
     get().calculateTotals();
   },
+  clearCart: async () => {
+    set({ cart: [], coupon: null, total: 0, subTotal: 0 });
+  },
 }));
