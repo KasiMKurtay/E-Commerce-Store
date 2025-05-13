@@ -2,18 +2,29 @@ import { motion } from "framer-motion";
 import { useCartStore } from "../stores/useCartStore";
 import { Link } from "react-router-dom";
 import { ArrowRight, Tag } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "../lib/axios";
 
 const stripePromise = loadStripe(
   "pk_test_51RMGsYRHxP8Pg9eIn6MXeIdm5rE9npEMZ76g4yDUyQe0KRzbFmdMH3GUG2NKZGFA0VMsvFdafIXwGUvirM6QZhZ000hq0QGxNB"
 );
+
 const OrderSummary = () => {
-  const { total, subTotal, coupon, isCouponApplied, applyCoupon, cart } =
-    useCartStore();
+  const {
+    total,
+    subTotal,
+    coupon,
+    isCouponApplied,
+    applyCoupon,
+    cart,
+    getCoupon,
+    removeCoupon,
+  } = useCartStore();
+
   const [couponCode, setCouponCode] = useState("");
   const [isApplying, setIsApplying] = useState(false);
+  const [error, setError] = useState("");
 
   const savings = subTotal - total;
   const formattedSubTotal = Number(subTotal).toFixed(2);
@@ -22,24 +33,55 @@ const OrderSummary = () => {
 
   const handleCheckout = async () => {
     const stripe = await stripePromise;
-    const res = await axios.post("/payments/create-checkout-session", {
-      products: cart,
-      coupon: coupon ? coupon.code : null,
-    });
-    const session = res.data;
-    const result = await stripe.redirectToCheckout({
-      sessionId: session.id,
-    });
-    if (result.error) {
-      console.log("result error", result.error);
+    try {
+      const res = await axios.post("/payments/create-checkout-session", {
+        products: cart,
+        coupon: coupon ? coupon.code : null,
+      });
+      const session = res.data;
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+      if (result.error) {
+        console.error("Stripe error", result.error.message);
+      }
+    } catch (err) {
+      console.error("Checkout error", err);
     }
   };
 
-  const handleApplyCoupon = async () => {
+  const handleApplyCoupon = async (e) => {
+    e.preventDefault();
+    if (!couponCode) return;
+
     setIsApplying(true);
-    await applyCoupon(couponCode);
+    const normalizedCode = couponCode.trim().toLowerCase();
+    const result = await applyCoupon(normalizedCode);
+
+    if (!result) {
+      setError("Geçersiz kupon kodu.");
+    } else {
+      setError("");
+    }
+
     setIsApplying(false);
   };
+
+  const handleRemoveCoupon = async () => {
+    await removeCoupon();
+    setCouponCode("");
+    setError("");
+  };
+
+  useEffect(() => {
+    getCoupon();
+  }, [getCoupon]);
+
+  useEffect(() => {
+    if (coupon) {
+      setCouponCode(coupon.code);
+    }
+  }, [coupon]);
 
   return (
     <motion.div
@@ -74,9 +116,17 @@ const OrderSummary = () => {
                 <Tag className="h-4 w-4" />
                 <span>Coupon ({coupon.code})</span>
               </div>
-              <span className="font-medium text-emerald-400">
-                -{coupon.discountPercentage}%
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-emerald-400">
+                  -{coupon.discountPercentage}%
+                </span>
+                <button
+                  onClick={handleRemoveCoupon}
+                  className="text-xs text-red-400 hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           )}
 
@@ -109,6 +159,7 @@ const OrderSummary = () => {
                 {isApplying ? "Applying..." : "Apply"}
               </motion.button>
             </div>
+            {error && <p className="text-sm text-red-500">{error}</p>}
           </form>
         )}
 

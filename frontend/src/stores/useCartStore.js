@@ -19,6 +19,32 @@ export const useCartStore = create((set, get) => ({
     }
   },
 
+  getCoupon: async () => {
+    try {
+      const res = await axios.get("/coupons");
+      set({ coupon: res.data });
+    } catch (error) {
+      console.error("Error in getCoupon controller", error.message);
+    }
+  },
+
+  removeCoupon: () => {
+    set({ coupon: null, isCouponApplied: false });
+    get().calculateTotals();
+    toast.success("Coupon removed successfully");
+  },
+
+  applyCoupon: async (code) => {
+    try {
+      const res = await axios.post("/coupons/validate", { code });
+      set({ coupon: res.data, isCouponApplied: true });
+      get().calculateTotals();
+      toast.success("Coupon applied successfully");
+    } catch (error) {
+      toast.error(error.response.data.message || "An error occurred");
+    }
+  },
+
   addToCart: async (product) => {
     try {
       await axios.post("/cart", { productId: product._id });
